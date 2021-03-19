@@ -1,0 +1,16 @@
+version: '3.5'
+services:
+    jupyter:
+        build: 
+            context: ./
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - "8000:8000"
+        volumes: 
+            - ./userhome:/home
+            - ./createusers.txt:/root/createusers.txt
+ 
+#        environment:
+#            - 
+
