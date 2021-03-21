@@ -12,7 +12,6 @@ RUN mkdir -p /workdir && chmod 777 /workdir && \
     apt-get install -yqq python2 && \
     apt-get install -yqq python3 python3-pip && \
     pip3 --no-cache-dir install --upgrade pip setuptools && \
-    \
     #Julia && \
     echo "--------------------------------------" && \
     echo "----------- JULIA INSTALL ------------" && \
@@ -28,14 +27,12 @@ RUN curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64
     rm -rf /tmp/miniconda.sh && \
     conda install -y python=3 && \
     conda update conda && \
-    #conda create -y -n py27 python=2.7 anaconda && \
     conda clean --all --yes
 
-RUN conda install -c conda-forge jupyterlab=3
-RUN conda install -c conda-forge -c pytorch -c krinsman jupyterhub notebook nbgitpuller matplotlib \ 
-                                                        #tensorflow \
-                                                        #pytorch torchvision torchaudio torchtext \
-                                                        xeus-cling \
+RUN conda install -c conda-forge -c pytorch -c krinsman jupyterhub jupyterlab notebook nbgitpuller matplotlib \ 
+                                                        tensorflow \
+                                                        pytorch torchvision torchaudio torchtext \
+                                                        xeus-cling xeus-python \
                                                         ipywidgets beakerx \
                                                         bash_kernel \
                                                         nodejs \
@@ -76,14 +73,18 @@ RUN echo "--------------------------------------" && \
 #RUN jupyter labextension install @wallneradam/run_all_buttons
 #RUN jupyter labextension install jupyterlab-spreadsheet
 
-RUN conda install -c conda-forge jupyterlab=3
-RUN pip install --upgrade --pre nbdime
-#RUN conda install -c conda-forge jupyterlab jupyterlab-git #v3 is beta, not available via conda yet
-RUN pip install --upgrade --pre jupyterlab-git
-#&& jupyter lab build
-RUN conda install -c conda-forge jupyterlab mamba_gator 
-#&& jupyter labextension install @mamba-org/gator-lab
+RUN conda install -c conda-forge jupyterlab=2
+RUN conda install -c conda-forge jupyterlab jupyterlab-git 
+RUN conda install -c conda-forge nodejs=12
+RUN conda install -c conda-forge jupyterlab mamba_gator && jupyter labextension install @mamba-org/gator-lab
+RUN jupyter labextension install @jupyterlab/debugger
 RUN jupyter lab build
+
+RUN conda install -c conda-forge nb_conda_kernels
+
+#create env
+#RUN conda create -y -n py27 python=2.7 anaconda
+
 
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
