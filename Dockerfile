@@ -85,6 +85,7 @@ RUN conda install -c conda-forge nb_conda_kernels
 #create env
 #RUN conda create -y -n py27 python=2.7 anaconda
 
+RUN pip install jupyterlab_hdf hdf5plugin && jupyter labextension install @jupyterlab/hdf5
 
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
