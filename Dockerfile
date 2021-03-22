@@ -86,14 +86,15 @@ RUN conda install -c conda-forge nb_conda_kernels
 #RUN conda create -y -n py27 python=2.7 anaconda
 
 RUN pip install jupyterlab_hdf hdf5plugin && jupyter labextension install @jupyterlab/hdf5
+RUN pip install oauthenticator mwoauth
 
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
 ADD StartHere.ipynb /etc/skel
 COPY scripts /scripts
 
-RUN chmod -R 755 /scripts && \
-    jupyter trust /etc/skel/StartHere.ipynb
+RUN chmod -R 755 /scripts 
+#   &&  jupyter trust /etc/skel/StartHere.ipynb
     
 EXPOSE 8000
 

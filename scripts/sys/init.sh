@@ -2,7 +2,7 @@
 
 #Set Timezone
 if [[ -z "${TZ}" ]]; then
-   ln -fs /usr/share/zoneinfo/Europe/London /etc/localtime
+   ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    dpkg-reconfigure -f noninteractive tzdata
 else
    ln -fs /usr/share/zoneinfo/${TZ} /etc/localtime
@@ -12,10 +12,10 @@ fi
 echo 'Configuring shared folder…'
 groupadd jupyterhub-users
 
-mkdir -p /srv/scratch
-chown -R root:jupyterhub-users /srv/scratch
-chmod 777 /srv/scratch
-chmod g+s /srv/scratch
+mkdir -p /home/shared
+chown -R root:jupyterhub-users /home/shared
+chmod 777 /home/shared
+chmod g+s /home/shared
 
 #CREATE USERS.
 # username:passsword:Y
@@ -43,7 +43,7 @@ if [ -f $file ]
                 echo "$username:$password" | chpasswd
                 
                 usermod -aG jupyterhub-users $username
-                ln -s /srv/scratch /home/$username/shared
+                ln -s /home/shared /home/$username/shared
                 
                 if [ "$is_sudo" = "Y" ]
                   then
