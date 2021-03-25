@@ -14,8 +14,8 @@ groupadd jupyterhub-users
 
 mkdir -p /home/shared
 chown -R root:jupyterhub-users /home/shared
-chmod 777 /home/shared
-chmod g+s /home/shared
+chmod -R 777 /home/shared
+chmod -R g+s /home/shared
 
 #CREATE USERS.
 # username:passsword:Y

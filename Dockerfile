@@ -76,21 +76,26 @@ RUN echo "--------------------------------------" && \
 RUN conda install -c conda-forge jupyterlab=2
 RUN conda install -c conda-forge jupyterlab jupyterlab-git 
 RUN conda install -c conda-forge nodejs=12
+
 RUN conda install -c conda-forge jupyterlab mamba_gator && jupyter labextension install @mamba-org/gator-lab
-RUN jupyter labextension install @jupyterlab/debugger
-RUN jupyter lab build
-
+RUN conda init bash
 RUN conda install -c conda-forge nb_conda_kernels
-
+#patch see https://github.com/simontaurus/nb_conda_kernels/commit/f40986cd97bb39fae2f26b75eef3f662c2753ed0
+RUN sed -i -e "s/env_name = 'root'/continue/g" /usr/local/lib/python3.8/site-packages/nb_conda_kernels/manager.py
 #create env
 #RUN conda create -y -n py27 python=2.7 anaconda
 
+RUN jupyter labextension install @jupyterlab/debugger
+RUN jupyter lab build
 RUN pip install jupyterlab_hdf hdf5plugin && jupyter labextension install @jupyterlab/hdf5
 RUN pip install oauthenticator mwoauth
+RUN conda install -c conda-forge ipympl==0.7.0 && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-matplotlib@0.9.0
+RUN jupyter labextension install @deathbeds/jupyterlab_graphviz
+RUN echo "Finished"
 
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
-ADD StartHere.ipynb /etc/skel
+#ADD StartHere.ipynb /etc/skel
 COPY scripts /scripts
 
 RUN chmod -R 755 /scripts 
