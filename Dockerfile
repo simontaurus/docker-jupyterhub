@@ -91,7 +91,14 @@ RUN pip install jupyterlab_hdf hdf5plugin && jupyter labextension install @jupyt
 RUN pip install oauthenticator mwoauth
 RUN conda install -c conda-forge ipympl==0.7.0 && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-matplotlib@0.9.0
 RUN jupyter labextension install @deathbeds/jupyterlab_graphviz
-RUN echo "Finished"
+#display pandas dataframe
+RUN pip install qgrid && jupyter labextension install qgrid2 
+
+#install media wiki and excel tools
+RUN pip install mwclient xlrd openpyxl mwparserfromhell
+
+#install media sparql and rdf tools
+RUN pip install Owlready2 rdflib sparqlwrapper sparql-client
 
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
