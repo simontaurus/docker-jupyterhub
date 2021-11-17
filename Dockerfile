@@ -73,41 +73,50 @@ RUN echo "--------------------------------------" && \
 #RUN jupyter labextension install @wallneradam/run_all_buttons
 #RUN jupyter labextension install jupyterlab-spreadsheet
 
-RUN conda install -c conda-forge jupyterlab=2
+### JupyterLab ###
+RUN conda install -c conda-forge jupyterlab
 RUN conda install -c conda-forge jupyterlab jupyterlab-git 
-RUN conda install -c conda-forge nodejs=12
+RUN conda install -c conda-forge nodejs
 
+### Env ###
 RUN conda install -c conda-forge jupyterlab mamba_gator && jupyter labextension install @mamba-org/gator-lab
 RUN conda init bash
 RUN conda install -c conda-forge nb_conda_kernels
 #patch see https://github.com/simontaurus/nb_conda_kernels/commit/f40986cd97bb39fae2f26b75eef3f662c2753ed0
 RUN sed -i -e "s/env_name = 'root'/continue/g" /usr/local/lib/python3.8/site-packages/nb_conda_kernels/manager.py
-#create env
-#RUN conda create -y -n py27 python=2.7 anaconda
-
 RUN jupyter labextension install @jupyterlab/debugger
 RUN jupyter lab build
-RUN pip install jupyterlab_hdf hdf5plugin && jupyter labextension install @jupyterlab/hdf5
-RUN pip install oauthenticator mwoauth
+
+### Auth ###
+RUN pip install -e git+https://github.com/simontaurus/oauthenticator.git@fix-ssl-ca-validation#egg=oauthenticator
+RUN pip install  mwoauth
 RUN conda install -c conda-forge ipympl==0.7.0 && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-matplotlib@0.9.0
+
+### Data Handling ###
 RUN jupyter labextension install @deathbeds/jupyterlab_graphviz
 #display pandas dataframe
-RUN pip install qgrid && jupyter labextension install qgrid2 
+RUN pip install qgrid && jupyter labextension install @j123npm/qgrid2@1.1.4 
+RUN pip install jupyterlab_hdf hdf5plugin
+RUN jupyter labextension install @jupyterlab/hdf5
 
+### Mediawiki, Semantics ###
 #install media wiki and excel tools
 RUN pip install mwclient xlrd openpyxl mwparserfromhell
-
 #install media sparql and rdf tools
 RUN pip install Owlready2 rdflib sparqlwrapper sparql-client
 
+### Dashboarding ###
+RUN pip install "jupyterlab>=1.0" jupyterlab-dash==0.1.0a3
+
+RUN apt-get update && apt-get install nano 
+
 ADD settings/jupyter_notebook_config.py /etc/jupyter/
 ADD settings/jupyterhub_config.py /etc/jupyterhub/
-#ADD StartHere.ipynb /etc/skel
+
 COPY scripts /scripts
 
 RUN chmod -R 755 /scripts 
-#   &&  jupyter trust /etc/skel/StartHere.ipynb
-    
+
 EXPOSE 8000
 
 CMD "/scripts/sys/init.sh"
